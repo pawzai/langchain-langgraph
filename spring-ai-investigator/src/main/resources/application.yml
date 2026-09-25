@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: spring-ai-investigator
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:sqlite:data/shipping.db
+    driver-class-name: org.sqlite.JDBC
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+  thymeleaf:
+    cache: false
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      init:
+        # The models are pulled already; do not let Spring try to pull them on boot.
+        pull-model-strategy: never
+      chat:
+        options:
+          model: qwen3:14b
+          temperature: 0.0
+      embedding:
+        options:
+          model: qwen3-embedding:0.6b
+
+investigator:
+  chat-model: qwen3:14b
+  fast-chat-model: qwen3:8b
+  fast-mode: false
+  embedding-model: qwen3-embedding:0.6b
+  max-investigation-loops: 2
+  knowledge-dir: classpath:data/knowledge/
+  log-file: classpath:data/logs/application.log
+  vector-store-file: data/vector-store.json
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.example.investigator: INFO

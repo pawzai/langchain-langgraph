@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Production Issue Investigator</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header class="masthead">
+    <div class="wrap">
+        <h1>AI Production Issue Investigator</h1>
+        <p class="sub">Spring Boot + Spring AI + LangGraph4j, running entirely on local models.</p>
+        <a class="health-link" th:href="@{/health/checks}">Run system checks</a>
+    </div>
+</header>
+
+<main class="wrap">
+
+    <section class="card">
+        <h2>Try a scenario</h2>
+        <div class="scenarios">
+            <form th:each="scenario : ${scenarios}" method="post" th:action="@{/investigate}">
+                <input type="hidden" name="question" th:value="${scenario.question}">
+                <input type="hidden" name="fast" th:value="${fast}">
+                <button type="submit" class="scenario">
+                    <span class="scenario-title" th:text="${scenario.title}">Title</span>
+                    <span class="scenario-note" th:text="${scenario.note}">Note</span>
+                </button>
+            </form>
+        </div>
+
+        <form method="post" th:action="@{/investigate}" class="ask">
+            <label for="question">Or describe the issue</label>
+            <textarea id="question" name="question" rows="3"
+                      placeholder="Why is shipment SHP-1007 stuck in CREATED status?"
+                      th:text="${question}"></textarea>
+            <div class="ask-actions">
+                <label class="toggle">
+                    <input type="checkbox" name="fast" value="true" th:checked="${fast}">
+                    <span>Fast mode (smaller model)</span>
+                </label>
+                <button type="submit" class="primary">Investigate</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card error" th:if="${error}">
+        <h2>Something went wrong</h2>
+        <p th:text="${error}">error</p>
+    </section>
+
+    <th:block th:if="${result}">
+
+        <section class="card">
+            <h2>What the agent understood</h2>
+            <p>
+                <span class="pill" th:text="${result.kind}">KIND</span>
+                <span th:text="${result.summary}">summary</span>
+            </p>
+            <p class="muted" th:if="${result.rePlanned()}">
+                The evidence was thin on the first pass, so the agent re-planned and searched again.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Workflow trace</h2>
+            <ol class="trace">
+                <li th:each="line : ${result.trace}" th:text="${line}">step</li>
+            </ol>
+        </section>
+
+        <section class="card" th:if="${!result.evidence.isEmpty()}">
+            <h2>Evidence</h2>
+            <div class="tabs">
+                <details th:each="item, iter : ${result.evidence}" th:open="${iter.first}">
+                    <summary th:text="${item.displayName()}">source</summary>
+                    <pre th:text="${item.content}">content</pre>
+                </details>
+            </div>
+        </section>
+
+        <section class="card" th:if="${result.hasAnswer()}">
+            <h2>Answer</h2>
+            <p class="answer" th:text="${result.answer}">answer</p>
+        </section>
+
+        <section class="card" th:if="${result.hasReport()}">
+            <h2>Root cause analysis</h2>
+
+            <div class="confidence">
+                <div class="bar"><span th:style="'width:' + ${result.report.confidence} + '%'"></span></div>
+                <span class="confidence-label" th:text="${result.report.confidence} + '% confidence'">0%</span>
+            </div>
+
+            <h3>Cause</h3>
+            <p th:text="${result.report.rootCause}">cause</p>
+
+            <h3>Supporting evidence</h3>
+            <ul>
+                <li th:each="line : ${result.report.evidence}" th:text="${line}">evidence</li>
+            </ul>
+
+            <h3>Recommended action</h3>
+            <p th:text="${result.report.recommendedAction}">action</p>
+        </section>
+
+        <section class="card approval" th:if="${result.awaitingApproval}">
+            <h2>Waiting for your approval</h2>
+            <p>This action would change production data, so the agent stopped here.
+                Nothing has been applied.</p>
+
+            <form method="post" th:action="@{/approve}">
+                <input type="hidden" name="threadId" th:value="${result.threadId}">
+                <input type="hidden" name="question" th:value="${question}">
+                <input type="hidden" name="fast" th:value="${fast}">
+
+                <label for="modifiedAction">Replace the action (only used with Modify)</label>
+                <textarea id="modifiedAction" name="modifiedAction" rows="2"
+                          placeholder="Assign trailer TRL-207 instead"></textarea>
+
+                <div class="approval-actions">
+                    <button type="submit" name="decision" value="approve" class="approve">Approve</button>
+                    <button type="submit" name="decision" value="reject" class="reject">Reject</button>
+                    <button type="submit" name="decision" value="modify" class="modify">Modify</button>
+                </div>
+            </form>
+        </section>
+
+        <p class="thread muted">Thread <code th:text="${result.threadId}">id</code></p>
+    </th:block>
+
+</main>
+
+</body>
+</html>

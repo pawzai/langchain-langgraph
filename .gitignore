@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+
+# Generated artefacts — rebuilt by scripts/bootstrap.py
+data/chroma/
+data/shipping.db
+data/checkpoints.sqlite
+
+# Rewritten on every run of eval/run_eval.py
+eval/results.json
+
+.DS_Store
+.idea/
+.vscode/

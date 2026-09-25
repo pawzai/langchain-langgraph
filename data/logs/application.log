@@ -1,0 +1,25 @@
+2026-08-30 04:12:03 INFO  ShipmentIntakeService - Created shipment SHP-1007 at facility SEA priority STANDARD
+2026-08-30 04:12:04 INFO  ShipmentWorkflowService - Evaluating transition CREATED -> READY_FOR_DISPATCH for SHP-1007
+2026-08-30 04:12:04 ERROR ShipmentWorkflowService - No active trailer assignment found for SHP-1007. Transition rejected, shipment remains in CREATED.
+2026-08-30 04:12:04 DEBUG ShipmentWorkflowService - Validation detail for SHP-1007: trailerAssigned=false trailerActive=n/a locationEnabled=true
+2026-08-30 04:15:41 INFO  ShipmentIntakeService - Created shipment SHP-1008 at facility PDX priority EXPRESS
+2026-08-30 04:15:44 INFO  ShipmentWorkflowService - Transition CREATED -> READY_FOR_DISPATCH succeeded for SHP-1008 with trailer TRL-204
+2026-08-30 05:02:10 INFO  DriverAssignmentService - Driver DRV-88 assigned to trailer TRL-204
+2026-08-30 05:02:11 INFO  ShipmentWorkflowService - Transition READY_FOR_DISPATCH -> IN_TRANSIT succeeded for SHP-1008
+2026-08-30 06:30:00 INFO  TrailerMaintenanceJob - Nightly inspection sweep started
+2026-08-30 06:30:02 WARN  TrailerMaintenanceJob - Trailer TRL-311 inspection overdue by 4 days, status moved ACTIVE -> MAINTENANCE
+2026-08-30 06:30:05 INFO  TrailerMaintenanceJob - Nightly inspection sweep completed, 1 trailer moved to MAINTENANCE
+2026-08-30 08:11:22 INFO  ShipmentIntakeService - Created shipment SHP-1010 at facility DFW priority EXPRESS
+2026-08-30 08:11:23 INFO  ShipmentWorkflowService - Evaluating transition CREATED -> READY_FOR_DISPATCH for SHP-1010
+2026-08-30 08:11:23 ERROR ShipmentWorkflowService - No active trailer assignment found for SHP-1010. Assigned trailer TRL-311 has status MAINTENANCE.
+2026-08-30 08:11:23 DEBUG ShipmentWorkflowService - Validation detail for SHP-1010: trailerAssigned=true trailerActive=false locationEnabled=true
+2026-08-30 09:04:55 INFO  ShipmentIntakeService - Created shipment SHP-1013 at facility BOI priority STANDARD
+2026-08-30 09:04:56 INFO  ShipmentWorkflowService - Evaluating transition CREATED -> READY_FOR_DISPATCH for SHP-1013
+2026-08-30 09:04:56 ERROR ShipmentWorkflowService - Location not enabled for outbound dispatch for SHP-1013. Facility BOI is inbound only.
+2026-08-30 09:04:56 DEBUG ShipmentWorkflowService - Validation detail for SHP-1013: trailerAssigned=true trailerActive=true locationEnabled=false
+2026-08-30 10:20:00 INFO  ShipmentWorkflowService - Transition IN_TRANSIT -> DELIVERED succeeded for SHP-1002
+2026-08-30 11:45:13 WARN  DispatchSlaMonitor - Shipment SHP-1007 has exceeded its STANDARD dispatch target of 24 hours
+2026-08-30 11:45:13 WARN  DispatchSlaMonitor - Shipment SHP-1010 has exceeded its EXPRESS dispatch target of 2 hours
+2026-08-30 12:00:00 INFO  ComplianceService - Compliance sweep completed, 0 shipments moved to ON_HOLD
+2026-08-30 13:22:31 INFO  ShipmentIntakeService - Created shipment SHP-1014 at facility SEA priority ECONOMY
+2026-08-30 13:22:33 INFO  ShipmentWorkflowService - Transition CREATED -> READY_FOR_DISPATCH succeeded for SHP-1014 with trailer TRL-207

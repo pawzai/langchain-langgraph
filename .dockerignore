@@ -1,0 +1,12 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+.env
+data/chroma/
+data/shipping.db
+data/checkpoints.sqlite
+*.html
+*.md
+!README.md
+.DS_Store

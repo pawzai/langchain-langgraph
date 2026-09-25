@@ -1,0 +1,102 @@
+# Retrieval golden set.
+#
+# Each case names the document that genuinely answers the question. This measures the retriever
+# alone, not the generator: if the right chunk never reaches the model, no amount of prompting
+# will save the answer, so this is the layer worth measuring first.
+#
+# `expected_sources` drives hit@k and MRR. `expected_phrases` is a weaker signal that catches the
+# case where the right file is retrieved but the wrong section of it.
+#
+# Cases are deliberately mixed: some are pure paraphrase (dense search should win), some hinge on
+# a literal identifier such as MISSING_TRAILER or BOI (BM25 should win). A corpus of only one
+# kind would make hybrid search look pointless.
+
+- id: dispatch-conditions
+  question: What conditions are required for READY_FOR_DISPATCH?
+  expected_sources: [shipment_workflow.md]
+  expected_phrases: ["trailer", "ACTIVE"]
+
+- id: outbound-facilities
+  question: Which facilities are enabled for outbound dispatch?
+  expected_sources: [shipment_workflow.md]
+  expected_phrases: ["SEA", "BOI"]
+
+- id: inbound-only-code
+  question: Can a shipment sitting at BOI be dispatched?
+  expected_sources: [shipment_workflow.md, troubleshooting_guide.md]
+  expected_phrases: ["BOI"]
+
+- id: trailer-assigned-still-stuck
+  question: Why would a shipment that already has a trailer assigned still be stuck in CREATED?
+  expected_sources: [troubleshooting_guide.md]
+  expected_phrases: ["MAINTENANCE"]
+
+- id: log-message-meaning
+  question: What does the log message "No active trailer assignment found" tell me?
+  expected_sources: [troubleshooting_guide.md]
+  expected_phrases: ["No active trailer assignment"]
+
+- id: disagreeing-evidence
+  question: The database and the logs disagree about a shipment. Should I force the status?
+  expected_sources: [troubleshooting_guide.md]
+  expected_phrases: ["escalate", "billing"]
+
+- id: inspection-interval
+  question: How often do trailers need to pass inspection?
+  expected_sources: [business_conditions.md]
+  expected_phrases: ["90 days"]
+
+- id: reassign-approval
+  question: Does reassigning a trailer on a shipment still in CREATED need approval?
+  expected_sources: [business_conditions.md]
+  expected_phrases: ["Reassigning a trailer"]
+
+- id: express-target
+  question: What is the dispatch target for an EXPRESS shipment?
+  expected_sources: [business_conditions.md, sla_escalation_policy.pdf]
+  expected_phrases: ["EXPRESS", "2 hours"]
+
+- id: escalation-tier-facility
+  question: Which escalation tier owns a shipment blocked because outbound dispatch is disabled?
+  expected_sources: [sla_escalation_policy.pdf]
+  expected_phrases: ["Tier 2"]
+
+- id: escalation-tier-widespread
+  question: Who owns an incident affecting more than ten shipments at one facility?
+  expected_sources: [sla_escalation_policy.pdf]
+  expected_phrases: ["Tier 3"]
+
+- id: root-cause-categories
+  question: What are the valid root cause categories for SLA breach reporting?
+  expected_sources: [sla_escalation_policy.pdf]
+  expected_phrases: ["COMPLIANCE_HOLD"]
+
+- id: express-blocked-inbound
+  question: An EXPRESS shipment is blocked at an inbound-only facility. What tier is that?
+  expected_sources: [sla_escalation_policy.pdf]
+  expected_phrases: ["Tier 3"]
+
+- id: block-reason-null-trailer
+  question: Which BlockReason does the workflow service return when trailer_id is null?
+  expected_sources: [code/ShipmentWorkflowService.java]
+  expected_phrases: ["MISSING_TRAILER"]
+
+- id: ready-for-dispatch-method
+  question: Which method in the workflow service performs the CREATED to READY_FOR_DISPATCH transition?
+  expected_sources: [code/ShipmentWorkflowService.java]
+  expected_phrases: ["readyForDispatch"]
+
+- id: in-transit-preconditions
+  question: What does the code check before moving a shipment to IN_TRANSIT?
+  expected_sources: [code/ShipmentWorkflowService.java]
+  expected_phrases: ["departure scan"]
+
+- id: sla-window-code
+  question: How does the service decide that a shipment is breaching its SLA?
+  expected_sources: [code/ShipmentWorkflowService.java]
+  expected_phrases: ["slaWindow"]
+
+- id: production-write-approval
+  question: Which actions require a human approver before they are applied?
+  expected_sources: [business_conditions.md, sla_escalation_policy.pdf]
+  expected_phrases: ["approval"]

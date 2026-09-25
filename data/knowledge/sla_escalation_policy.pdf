@@ -1,0 +1,202 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 2 /Kids [3 0 R 5 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R /F2 8 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2484 >>
+stream
+BT
+16 TL
+1 0 0 1 56 780 Tm
+/F2 13 Tf
+(Shipment SLA and Escalation Policy) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Revision 4.2 - Operations Governance Board) Tj
+T*
+/F1 11 Tf
+(Applies to all outbound shipping facilities.) Tj
+T*
+/F1 11 Tf
+T*
+/F2 13 Tf
+(1. Dispatch service levels) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(A shipment must leave CREATED within a fixed window measured from) Tj
+T*
+/F1 11 Tf
+(its created_at timestamp. The window depends on shipment priority:) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(  EXPRESS   - 2 hours) Tj
+T*
+/F1 11 Tf
+(  STANDARD  - 24 hours) Tj
+T*
+/F1 11 Tf
+(  ECONOMY   - 72 hours) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(A shipment that exceeds its window is classed as SLA-breaching and) Tj
+T*
+/F1 11 Tf
+(must be reported to the duty operations manager on the same shift.) Tj
+T*
+/F1 11 Tf
+T*
+/F2 13 Tf
+(2. Escalation tiers) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Tier 1. Facility coordinator. Owns any shipment blocked for less) Tj
+T*
+/F1 11 Tf
+(than one SLA window. Resolves trailer assignment and dock issues) Tj
+T*
+/F1 11 Tf
+(directly without further approval.) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Tier 2. Regional operations manager. Owns any shipment blocked for) Tj
+T*
+/F1 11 Tf
+(one to three SLA windows, and any shipment blocked by a facility) Tj
+T*
+/F1 11 Tf
+(configuration problem such as outbound dispatch being disabled.) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Tier 3. Platform engineering on-call. Owns any shipment blocked by) Tj
+T*
+/F1 11 Tf
+(a workflow service error rather than a data problem, and any) Tj
+T*
+/F1 11 Tf
+(incident affecting more than ten shipments at one facility.) Tj
+T*
+/F1 11 Tf
+T*
+/F2 13 Tf
+(3. Approval requirements) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Any corrective action that writes to production shipment state) Tj
+T*
+/F1 11 Tf
+(requires a named human approver before it is applied. This covers) Tj
+T*
+/F1 11 Tf
+(assigning a trailer, changing a shipment status, clearing a) Tj
+T*
+/F1 11 Tf
+(compliance hold and re-enabling outbound dispatch at a facility.) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Read-only investigation never requires approval. Automated systems) Tj
+T*
+/F1 11 Tf
+(may diagnose and recommend, but may not apply, a state change.) Tj
+T*
+/F1 11 Tf
+T*
+/F2 13 Tf
+(4. Priority handling for blocked shipments) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(EXPRESS shipments blocked for any reason are escalated to Tier 2) Tj
+T*
+/F1 11 Tf
+(immediately, bypassing the Tier 1 window. A blocked EXPRESS) Tj
+T*
+/F1 11 Tf
+(shipment at an inbound-only facility is a Tier 3 incident because) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R /F2 8 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 498 >>
+stream
+BT
+16 TL
+1 0 0 1 56 780 Tm
+/F1 11 Tf
+(it indicates an upstream routing defect.) Tj
+T*
+/F1 11 Tf
+T*
+/F2 13 Tf
+(5. Reporting) Tj
+T*
+/F1 11 Tf
+T*
+/F1 11 Tf
+(Every SLA breach is recorded with the shipment identifier, the) Tj
+T*
+/F1 11 Tf
+(root cause category, the escalation tier reached and the total) Tj
+T*
+/F1 11 Tf
+(blocked duration. Root cause categories are: MISSING_TRAILER,) Tj
+T*
+/F1 11 Tf
+(TRAILER_UNAVAILABLE, FACILITY_DISABLED, COMPLIANCE_HOLD and) Tj
+T*
+/F1 11 Tf
+(SERVICE_ERROR.) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+8 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000002793 00000 n 
+0000002929 00000 n 
+0000003478 00000 n 
+0000003548 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+3623
+%%EOF

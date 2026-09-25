@@ -437,11 +437,11 @@
     <div class="container">
       <div class="hero">
         <div class="eyebrow">Demo Project Plan</div>
-        <h1>LangChain + LangGraph with Claude API</h1>
+        <h1>LangChain + LangGraph with Local LLMs (Ollama)</h1>
         <p>
           Build an AI Production Issue Investigator that searches knowledge,
           reads logs, checks a sample database, and produces an evidence-backed
-          root-cause analysis.
+          root-cause analysis — running entirely on locally hosted models.
         </p>
 
         <div class="hero-grid">
@@ -454,8 +454,8 @@
             <span>State, routing, retries, memory and human approval</span>
           </div>
           <div class="hero-card">
-            <strong>Claude API</strong>
-            <span>Reasoning, planning, evidence analysis and reporting</span>
+            <strong>Local LLM — Ollama</strong>
+            <span>qwen3:14b reasoning, qwen3-embedding:0.6b retrieval, zero API cost</span>
           </div>
         </div>
       </div>
@@ -513,7 +513,7 @@
       <div class="section-head">
         <div>
           <h2>2. High-Level Architecture</h2>
-          <p>The UI sends a problem to a controlled LangGraph workflow. Claude provides intelligence while LangChain connects the model to knowledge and tools.</p>
+          <p>The UI sends a problem to a controlled LangGraph workflow. A locally hosted qwen3:14b model provides the intelligence while LangChain connects the model to knowledge and tools. Every inference call stays inside the Ollama runtime on localhost.</p>
         </div>
       </div>
 
@@ -526,6 +526,12 @@
           <div class="node" style="border-color:#b9c5ff;background:#f3f5ff;">
             LangGraph Investigation Workflow
             <small>Understands issue → plans → routes → validates → reports</small>
+          </div>
+          <div class="vertical-arrow">↓</div>
+
+          <div class="node" style="border-color:#c9b6f5;background:#f8f4ff;">
+            Ollama Runtime · http://localhost:11434
+            <small>qwen3:14b for planning and reasoning · qwen3-embedding:0.6b for document vectors — nothing leaves the machine</small>
           </div>
           <div class="vertical-arrow">↓</div>
 
@@ -658,16 +664,72 @@ Assign an active trailer and retry the workflow.</div>
           <tbody>
             <tr><td>User Interface</td><td>Streamlit</td><td>Fastest way to create a visual demo</td></tr>
             <tr><td>Backend</td><td>FastAPI</td><td>API layer for investigation requests</td></tr>
-            <tr><td>LLM</td><td>Claude API</td><td>Planning, reasoning and report generation</td></tr>
+            <tr><td>LLM</td><td>Ollama + qwen3:14b (qwen3:8b for fast iteration)</td><td>Local planning, reasoning and report generation — no API cost or data egress</td></tr>
+            <tr><td>LLM Integration</td><td>langchain-ollama (ChatOllama, OllamaEmbeddings)</td><td>Connects LangChain and LangGraph to the local runtime</td></tr>
             <tr><td>AI Components</td><td>LangChain</td><td>Prompts, models, tools, RAG and structured output</td></tr>
             <tr><td>Workflow</td><td>LangGraph</td><td>State, routing, retries and checkpoints</td></tr>
             <tr><td>Vector Store</td><td>Chroma</td><td>Store and retrieve embedded knowledge chunks</td></tr>
-            <tr><td>Embeddings</td><td>Local Hugging Face model</td><td>Create vectors without extra API cost</td></tr>
+            <tr><td>Embeddings</td><td>qwen3-embedding:0.6b via Ollama</td><td>Create vectors locally, without extra API cost</td></tr>
             <tr><td>Database</td><td>SQLite</td><td>Safe sample shipping database</td></tr>
             <tr><td>Logs</td><td>Local .log files</td><td>Simulate production troubleshooting</td></tr>
             <tr><td>Deployment</td><td>Docker</td><td>Easy to run on any demo machine</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:20px;">
+        <div class="card">
+          <h3 style="margin-top:0;">Why Local, and Why the Provider Stays Pluggable</h3>
+          <div class="checklist">
+            <div class="check">Privacy: production logs and database rows never leave the machine.</div>
+            <div class="check">Cost: no per-token billing, so prompts and demo runs can be repeated freely.</div>
+            <div class="check">Swappable: all model construction lives in one factory function.</div>
+          </div>
+          <p style="margin-bottom:0;">
+            Moving to Anthropic or OpenAI later means changing that single function — the graph,
+            tools and RAG layer stay untouched.
+          </p>
+          <div class="prompt-box" style="white-space:pre-wrap;"># app/llm.py — the single place a provider is chosen
+from langchain_ollama import ChatOllama, OllamaEmbeddings
+
+def get_chat_model(fast: bool = False):
+    return ChatOllama(
+        model="qwen3:8b" if fast else "qwen3:14b",
+        base_url="http://localhost:11434",
+        temperature=0,
+    )
+
+def get_embeddings():
+    return OllamaEmbeddings(
+        model="qwen3-embedding:0.6b",
+        base_url="http://localhost:11434",
+    )</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">Model Selection</h3>
+          <table>
+            <thead>
+              <tr><th>Model</th><th>Size</th><th>Use in this project</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>qwen3:14b</td><td>9.3 GB</td><td>Default — planning, evidence correlation and RCA generation</td></tr>
+              <tr><td>qwen3:8b</td><td>5.2 GB</td><td>Fast development loop and quick prompt iteration</td></tr>
+              <tr><td>qwen3-embedding:0.6b</td><td>639 MB</td><td>Chroma embeddings for the knowledge base</td></tr>
+              <tr><td>qwen3-coder:30b</td><td>18 GB</td><td>Optional swap for maximum reasoning quality, slower responses</td></tr>
+              <tr><td>devstral:latest</td><td>14 GB</td><td>Optional swap if tool-calling reliability needs tuning</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Local Model Setup</h3>
+          <div class="prompt-box" style="white-space:pre-wrap;">ollama pull qwen3:14b
+ollama pull qwen3:8b
+ollama pull qwen3-embedding:0.6b
+ollama serve            # exposes http://localhost:11434
+
+pip install langchain langchain-ollama langgraph \
+            langchain-chroma fastapi streamlit</div>
+        </div>
       </div>
     </section>
 
@@ -682,8 +744,8 @@ Assign an active trailer and retry the workflow.</div>
       <div class="timeline">
         <div class="day">1</div>
         <div class="timeline-item">
-          <h3>Claude + LangChain Foundation</h3>
-          <p>Create the Python project, configure the Claude API, make the first model call and return structured JSON.</p>
+          <h3>Ollama + LangChain Foundation</h3>
+          <p>Create the Python project, install langchain-ollama, point ChatOllama at http://localhost:11434, make the first qwen3:14b call and verify structured JSON output and tool-calling.</p>
         </div>
 
         <div class="day">2</div>
@@ -695,7 +757,7 @@ Assign an active trailer and retry the workflow.</div>
         <div class="day">3</div>
         <div class="timeline-item">
           <h3>Add RAG</h3>
-          <p>Create sample workflow documents, split them, generate embeddings, store them in Chroma and retrieve relevant sources.</p>
+          <p>Create sample workflow documents, split them, generate embeddings with qwen3-embedding:0.6b, store them in Chroma and retrieve relevant sources.</p>
         </div>
 
         <div class="day">4</div>
@@ -770,17 +832,18 @@ Assign an active trailer and retry the workflow.</div>
       <div class="callout">
         LangChain provides the AI building blocks. LangGraph arranges those
         building blocks into a controlled, stateful business process.
-        Claude provides the intelligence inside the process.
+        A locally hosted model provides the intelligence inside the process —
+        no data leaves the machine.
       </div>
 
       <div class="grid-3" style="margin-top:20px;">
         <div class="card">
-          <h3>Plain Claude Call</h3>
+          <h3>Plain Local LLM Call</h3>
           <p>Good for simple prompt-and-response use cases.</p>
         </div>
         <div class="card">
           <h3>LangChain</h3>
-          <p>Connects Claude with prompts, knowledge, retrieval and tools.</p>
+          <p>Connects the local model with prompts, knowledge, retrieval and tools.</p>
         </div>
         <div class="card">
           <h3>LangGraph</h3>

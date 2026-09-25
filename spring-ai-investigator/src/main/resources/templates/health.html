@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System checks</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header class="masthead">
+    <div class="wrap">
+        <h1>System checks</h1>
+        <p class="sub">Run this before a demo. Every check should pass.</p>
+        <a class="health-link" th:href="@{/}">Back to the investigator</a>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="card">
+        <h2 th:if="${report.healthy()}" class="ok">Everything is ready.</h2>
+        <h2 th:unless="${report.healthy()}" class="bad">Some checks failed.</h2>
+
+        <ul class="checks">
+            <li th:each="check : ${report.checks()}"
+                th:classappend="${check.passed()} ? 'pass' : 'fail'">
+                <span class="mark" th:text="${check.passed()} ? 'PASS' : 'FAIL'">PASS</span>
+                <span class="name" th:text="${check.name()}">name</span>
+                <span class="detail" th:text="${check.detail()}">detail</span>
+            </li>
+        </ul>
+    </section>
+</main>
+
+</body>
+</html>

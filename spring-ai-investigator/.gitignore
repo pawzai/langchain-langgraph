@@ -1,0 +1,12 @@
+target/
+
+# Generated at runtime: the SQLite database and the persisted vector index.
+data/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project

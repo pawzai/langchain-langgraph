@@ -1,0 +1,36 @@
+services:
+  investigator-ui:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      FAST_MODE: "false"
+    # Lets the container reach an Ollama running on the host. Required on Linux; harmless
+    # elsewhere, where Docker Desktop provides the name already.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Keep the seeded database and the vector index outside the image so a rebuild does not
+      # discard them.
+      - investigator-data:/app/data
+    restart: unless-stopped
+
+  investigator-api:
+    build: .
+    command:
+      - sh
+      - -c
+      - python scripts/ensure_ready.py && uvicorn app.api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - investigator-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  investigator-data:
